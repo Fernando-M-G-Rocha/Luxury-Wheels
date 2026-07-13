@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Luxury Wheels</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-dark bg-dark">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+            <a class="navbar-brand me-3" href="/">Luxury Wheels</a>
+            <a class="btn btn-outline-light" href="/">Início</a>
+            {% if user %}
+                <a class="btn btn-warning ms-2" href="/minhas_reservas">Minhas Reservas</a>
+            {% endif %}
+        </div>
+        <div class="d-flex align-items-center">
+            {% if user %}
+                <span class="text-white me-2">Olá, {{ user['nome'] }}</span>
+                <a class="btn btn-outline-light" href="/logout">Sair</a>
+            {% else %}
+                <a class="btn btn-outline-light me-2" href="/login">Iniciar Sessão</a>
+                <a class="btn btn-outline-light" href="/register">Registar</a>
+            {% endif %}
+        </div>
+    </div>
+</nav>
+
+<!-- Filtros -->
+<div class="container mt-3">
+    <form method="get" action="/" class="row g-3 align-items-end">
+        <div class="col-md-2">
+            <label for="categoria" class="form-label">Categoria</label>
+            <select id="categoria" name="categoria" class="form-select">
+                <option value="">Todas</option>
+                <option>Pequeno</option>
+                <option>Médio</option>
+                <option>Grande</option>
+                <option>SUV</option>
+                <option>Luxo</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label for="transmissao" class="form-label">Transmissão</label>
+            <select id="transmissao" name="transmissao" class="form-select">
+                <option value="">Ambas</option>
+                <option>Manual</option>
+                <option>Automático</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <label for="tipo" class="form-label">Tipo de Veículo</label>
+            <input type="text" id="tipo" name="tipo" class="form-control" placeholder="Ex: Carro, Jipe">
+        </div>
+
+        <div class="col-md-2">
+            <label for="valor_max" class="form-label">Valor até (€)</label>
+            <input type="range" class="form-range" min="0" max="50" step="1" id="valor_max" name="valor_max"
+                   oninput="valorOutput.value = this.value">
+            <output id="valorOutput">20</output>
+        </div>
+
+        <div class="col-md-2">
+            <label for="capacidade" class="form-label">Capacidade</label>
+            <select id="capacidade" name="capacidade" class="form-select">
+                <option value="">Todas</option>
+                <option value="1-4">1-4 pessoas</option>
+                <option value="5-6">5-6 pessoas</option>
+                <option value="7+">7 ou mais</option>
+            </select>
+        </div>
+
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Filtrar</button>
+        </div>
+    </form>
+</div>
+
+<!-- Lista de Veículos -->
+<div class="container mt-4">
+    <div class="row">
+        {% for veiculo in veiculos %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                <img src="{{ url_for('static', filename='images/' + (veiculo['imagem'] or 'default.jpg')) }}"
+                     class="card-img-top" alt="{{ veiculo['modelo'] }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ veiculo['marca'] }} {{ veiculo['modelo'] }}</h5>
+                    <p class="card-text">A partir de {{ "%.2f"|format(veiculo['valor_diaria']) }}€ por dia</p>
+                    {% if user %}
+                        <a href="/reserva/{{ veiculo['id'] }}" class="btn btn-danger">Alugar Carro</a>
+                    {% else %}
+                        <a href="/login" class="btn btn-outline-secondary">Iniciar Sessão</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
